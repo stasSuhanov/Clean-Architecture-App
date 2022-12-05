@@ -1,26 +1,21 @@
 plugins {
     id 'org.jetbrains.kotlin.android'
-    id 'com.android.application'
+    id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
 }
 
 android {
-    namespace 'com.stanislav.cleanarchitecture'
+    namespace 'com.stanislav.presentation_user'
     compileSdk defaultCompileSdkVersion
 
     defaultConfig {
-        applicationId "com.stanislav.cleanarchitecture"
         minSdk defaultMinSdkVersion
         targetSdk defaultTargetSdkVersion
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary true
-        }
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -43,33 +38,23 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion versions.compose
     }
-    packagingOptions {
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
-    }
 }
 
 dependencies {
 
-    implementation(project(path: ":presentation-post"))
-    implementation(project(path: ":presentation-user"))
+    implementation(project(path: ":presentation-common"))
     implementation(project(path: ":domain"))
-    implementation(project(path: ":data-remote"))
-    implementation(project(path: ":data-local"))
-    implementation(project(path: ":data-repository"))
-    implementation androidx.core
-    implementation androidx.appCompat
-    implementation material.material
+    implementation coroutines.coroutinesAndroid
     implementation androidx.composeUi
     implementation androidx.composeMaterial
-    implementation androidx.composeUiToolingPreview
+    implementation androidx.viewModelKtx
+    implementation androidx.viewModelCompose
     implementation androidx.lifecycleRuntimeKtx
-    implementation androidx.composeActivity
     implementation androidx.navigationCompose
-    implementation androidx.hiltNavigationCompose
     implementation di.hiltAndroid
-    implementation project(path: ':presentation-common')
     kapt di.hiltCompiler
     testImplementation test.junit
+    testImplementation test.coroutines
+    testImplementation test.mockito
+    testImplementation test.mockitoInline
 }
