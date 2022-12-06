@@ -4,9 +4,8 @@ import com.stanislav.domain.entity.Interaction
 import com.stanislav.domain.repository.InteractionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class UpdateInteractionUseCase @Inject constructor(
+class UpdateInteractionUseCase constructor(
     configuration: Configuration,
     private val interactionRepository: InteractionRepository,
 ) : UseCase<UpdateInteractionUseCase.Request, UpdateInteractionUseCase.Response>(configuration) {

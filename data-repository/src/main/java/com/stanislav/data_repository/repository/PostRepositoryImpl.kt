@@ -6,9 +6,8 @@ import com.stanislav.domain.entity.Post
 import com.stanislav.domain.repository.PostRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
-class PostRepositoryImpl @Inject constructor(
+class PostRepositoryImpl constructor(
     private val remotePostDataSource: RemotePostDataSource,
     private val localPostDataSource: LocalPostDataSource,
 ) : PostRepository {

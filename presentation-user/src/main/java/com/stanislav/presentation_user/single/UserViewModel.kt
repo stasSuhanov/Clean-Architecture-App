@@ -1,12 +1,11 @@
 package com.stanislav.presentation_user.single
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stanislav.domain.usecase.GetUserUseCase
+import com.stanislav.presentation_common.state.MviViewModel
+import com.stanislav.presentation_common.state.UiSingleEvent
 import com.stanislav.presentation_common.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -16,16 +15,23 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(
     private val userUseCase: GetUserUseCase,
     private val converter: UserConverter
-) : ViewModel() {
+) : MviViewModel<UserModel, UiState<UserModel>, UserUiAction, UiSingleEvent>() {
 
-    private val _userFlow = MutableStateFlow<UiState<UserModel>>(UiState.Loading)
-    val userFlow: StateFlow<UiState<UserModel>> = _userFlow
+    override fun initState(): UiState<UserModel> = UiState.Loading
 
-    fun loadUser(userId: Long) {
+    override fun handleAction(action: UserUiAction) {
+        when (action) {
+            is UserUiAction.Load -> {
+                loadUser(action.userId)
+            }
+        }
+    }
+
+    private fun loadUser(userId: Long) {
         viewModelScope.launch {
-            userUseCase.execute(GetUserUseCase.Request(userId)).map {
-                converter.convert(it)
-            }.collect { _userFlow.value = it }
+            userUseCase.execute(GetUserUseCase.Request(userId))
+                .map { converter.convert(it) }
+                .collect { submitState(it) }
         }
     }
 }

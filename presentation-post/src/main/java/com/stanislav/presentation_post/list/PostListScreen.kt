@@ -8,31 +8,40 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.stanislav.presentation_common.navigation.NavRoutes
-import com.stanislav.presentation_common.navigation.PostInput
-import com.stanislav.presentation_common.navigation.UserInput
 import com.stanislav.presentation_common.state.CommonScreen
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun PostListScreen(
     viewModel: PostListViewModel,
     navController: NavController,
 ) {
-    viewModel.loadPosts()
-    viewModel.postListFlow.collectAsState().value.let { state ->
+    LaunchedEffect(Unit) { viewModel.submitAction(PostListUiAction.Load) }
+    viewModel.uiStateFlow.collectAsState().value.let { state ->
         CommonScreen(state = state) {
             PostList(it,
                 { postListItem ->
-                    viewModel.updateInteraction(it.interaction)
-                    navController.navigate(NavRoutes.Post.routeForPost(PostInput(postListItem.id)))
+                    viewModel.submitAction(PostListUiAction.PostClick(postListItem.id, it.interaction))
                 }) { postListItem ->
-                viewModel.updateInteraction(it.interaction)
-                navController.navigate(NavRoutes.User.routeForUser(UserInput(postListItem.userId)))
+                viewModel.submitAction(PostListUiAction.UserClick(postListItem.id, it.interaction))
+            }
+        }
+    }
+    LaunchedEffect(Unit) {
+        viewModel.singleEventFlow.collectLatest {
+            when (it) {
+                is PostListUiSingleEvent.OpenPostScreen -> {
+                    navController.navigate(it.navRoute)
+                }
+                is PostListUiSingleEvent.OpenUserScreen -> {
+                    navController.navigate(it.navRoute)
+                }
             }
         }
     }

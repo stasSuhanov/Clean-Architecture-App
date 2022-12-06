@@ -7,9 +7,8 @@ import com.stanislav.domain.repository.PostRepository
 import com.stanislav.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import javax.inject.Inject
 
-class GetPostsWithUsersWithInteractionUseCase @Inject constructor(
+class GetPostsWithUsersWithInteractionUseCase constructor(
     configuration: Configuration,
     private val postRepository: PostRepository,
     private val userRepository: UserRepository,
